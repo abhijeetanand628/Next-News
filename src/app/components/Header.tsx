@@ -3,7 +3,7 @@ import { Search } from 'lucide-react';
 
 const Header = () => {
   return (
-    <div className='flex items-center justify-between px-4 sm:px-6 md:px-12 lg:px-24 mt-4'>
+    <div className='flex items-center justify-between px-4 sm:px-6 md:px-12 lg:px-20 mt-4'>
         <h1 className='cursor-pointer text-gray-700 hover:text-black text-lg sm:text-xl md:text-xl'>
           NextNews
         </h1>
