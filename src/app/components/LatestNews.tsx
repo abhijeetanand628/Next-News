@@ -27,8 +27,14 @@ export default function LatestNews({ articles }: { articles: Article[] }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
       {articles.map((article, idx) => (
-        <div key={idx} className="rounded-xl overflow-hidden shadow-sm bg-white">
 
+        <a
+          key={idx}
+          href={article.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rounded-xl overflow-hidden shadow-sm bg-white block cursor-pointer hover:scale-110 hover:shadow-md duration-300"
+        >
           <img
             src={article.urlToImage || FALLBACK_IMG}
             alt={article.title}
@@ -46,7 +52,7 @@ export default function LatestNews({ articles }: { articles: Article[] }) {
               <span>{article.source?.name}</span>
             </div>
           </div>
-        </div>
+        </a>
       ))}
     </div>
   );

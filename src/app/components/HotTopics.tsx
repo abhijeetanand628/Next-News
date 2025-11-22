@@ -42,9 +42,9 @@ export default function HotTopics({
 
   return (
     <div
-        className="w-full flex flex-col lg:flex-row gap-6 items-stretch"
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
+      className="w-full flex flex-col lg:flex-row gap-6 items-stretch"
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
 
       <div className="relative lg:w-3/5 rounded-xl overflow-hidden shadow-lg">
