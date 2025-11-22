@@ -1,5 +1,5 @@
 'use client'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, Menu } from "lucide-react";
 import SideBar from "./SideBar";
 import { useRouter, usePathname } from "next/navigation";
@@ -27,6 +27,10 @@ const Header = () => {
 
   const router = useRouter();
   const pathname = usePathname();
+
+  const urlCategory = pathname.startsWith("/category/")
+  ? pathname.split("/")[2]
+  : null;
 
   const goHomeSmooth = () => {
     if (pathname === "/") {
@@ -61,6 +65,12 @@ const Header = () => {
     ...categories.filter((c) => c.value !== selectedCategory),
   ]
   : categories;
+
+  useEffect(() => {
+    if (urlCategory) {
+      setSelectedCategory(urlCategory);
+    }
+  }, [urlCategory]);
 
   return (
     <>
