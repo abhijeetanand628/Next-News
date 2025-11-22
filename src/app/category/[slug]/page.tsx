@@ -1,61 +1,69 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams, useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 
-interface PageProps {
-  params: {
-    slug: string;
+type Article = {
+  title: string;
+  description: string;
+  urlToImage: string | null;
+  url: string;
+  source: { name: string };
+  content: string;
+  publishedAt: string;
+};
+
+export default function CategoryPage() {
+  const { slug } = useParams();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const pageFromUrl = Number(searchParams.get("page") || 1);
+
+  const [news, setNews] = useState<Article[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(pageFromUrl);
+
+  const perPage = 8;
+
+  const totalPages = Math.ceil(news.length / perPage);
+  const start = (page - 1) * perPage;
+  const paginatedNews = news.slice(start, start + perPage);
+
+  useEffect(() => {
+    const fetchCategoryNews = async () => {
+      try {
+        const response = await fetch(`/api/news?category=${slug}`);
+        const data = await response.json();
+        setNews(data.articles || []);
+      } catch (err) {
+        console.error("Error fetching category news:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategoryNews();
+  }, [slug]);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [page]);
+
+  const changePage = (num: number) => {
+    setPage(num);
+    router.push(`/category/${slug}?page=${num}`);
   };
-}
-
-export default async function CategoryPage(props: PageProps) {
-  const params = await props.params;
-  const slug = params.slug;
-
-  const apiKey = process.env.NEWS_API_KEY;
-
-  if (!apiKey) {
-    return (
-      <div className="p-8">
-        <h2 className="text-xl font-semibold">Missing API Key</h2>
-        <p>Add NEWSAPI_KEY to your .env.local</p>
-      </div>
-    );
-  }
-
-  const categoryMap: any = {
-    world: "general",
-    general: "general",
-    technology: "technology",
-    health: "health",
-    business: "business",
-    sports: "sports",
-    entertainment: "entertainment",
-    gaming: "gaming",
-  };
-
-  const category = categoryMap[slug] || slug;
-
-  const apiUrl = `https://newsapi.org/v2/top-headlines?category=${category}&pageSize=20&country=us&apiKey=${apiKey}`;
-
-  const response = await fetch(apiUrl, { next: { revalidate: 60 } });
-
-  if (!response.ok) {
-    return (
-      <div className="p-8">
-        <h2>Error fetching news</h2>
-        <p>{response.status}</p>
-      </div>
-    );
-  }
-
-  const data: any = await response.json();
-  const articles = data.articles || [];
 
   return (
     <main className="px-4 sm:px-6 md:px-12 lg:px-20 py-8">
-      <h1 className="text-2xl font-bold capitalize mb-6">{slug}</h1>
+      <h1 className="text-4xl font-bold capitalize mb-6">{slug} News</h1>
+
+      {loading && <p>Loading news...</p>}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {articles.map((item: any, i: number) => (
+        {paginatedNews.map((item, i) => (
           <Link
             href={{
               pathname: "/article",
@@ -71,9 +79,7 @@ export default async function CategoryPage(props: PageProps) {
             }}
             key={i}
           >
-            <article
-              className="bg-white rounded-xl shadow-md hover:shadow-lg overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02]"
-            >
+            <article className="bg-white rounded-xl shadow-md hover:shadow-lg overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02]">
               {item.urlToImage && (
                 <img
                   src={item.urlToImage}
@@ -100,6 +106,51 @@ export default async function CategoryPage(props: PageProps) {
           </Link>
         ))}
       </div>
+
+      {/* Pagination */}
+      {news.length > 0 && (
+        <div className="flex justify-center items-center gap-3 mt-10">
+
+          <button
+            onClick={() => page > 1 && changePage(page - 1)}
+            disabled={page === 1}
+            className={`px-4 py-2 border rounded-lg ${
+              page === 1
+                ? "opacity-40 cursor-not-allowed"
+                : "hover:bg-gray-100 cursor-pointer"
+            }`}
+          >
+            Prev
+          </button>
+
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
+            <button
+              key={num}
+              onClick={() => changePage(num)}
+              className={`px-3 py-2 rounded-lg border ${
+                page === num
+                  ? "bg-gray-900 text-white cursor-pointer"
+                  : "hover:bg-gray-100 cursor-pointer"
+              }`}
+            >
+              {num}
+            </button>
+          ))}
+
+          <button
+            onClick={() => page < totalPages && changePage(page + 1)}
+            disabled={page === totalPages}
+            className={`px-4 py-2 border rounded-lg ${
+              page === totalPages
+                ? "opacity-40 cursor-not-allowed"
+                : "hover:bg-gray-100 cursor-pointer"
+            }`}
+          >
+            Next
+          </button>
+
+        </div>
+      )}
     </main>
   );
 }

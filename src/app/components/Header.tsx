@@ -12,7 +12,7 @@ interface Category {
 
 const categories: Category[] = [
   { label: "Technology", value: "technology" },
-  { label: "World", value: "general" },
+  { label: "General", value: "general" },
   { label: "Gaming", value: "gaming" },
   { label: "Health", value: "health" },
   { label: "Business", value: "business" },
@@ -38,6 +38,16 @@ const Header = () => {
       }, 250); 
     }
   };
+
+  const goHome = () => {  
+    setSelectedCategory(null);   
+    router.push("/");
+    setOpen(false);        
+    setTimeout(() => {             
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 250);
+  }
+
 
   const categorySelect = (value: string) => {
     setSelectedCategory(value);
@@ -85,7 +95,7 @@ const Header = () => {
         categories={reorderedCategories} 
         selectedCategory={selectedCategory}
         onSelectCategory={categorySelect}
-        goHome={goHomeSmooth}  
+        goHome={goHome}  
       />
     </>
   );
