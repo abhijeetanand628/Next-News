@@ -25,7 +25,7 @@ export default function CategoryPage() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(pageFromUrl);
 
-  const perPage = 8;
+  const perPage = 6;
 
   const totalPages = Math.ceil(news.length / perPage);
   const start = (page - 1) * perPage;

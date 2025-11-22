@@ -24,6 +24,7 @@ const Header = () => {
 
   const [open, setOpen] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [showSearch, setShowSearch] = useState<boolean>(false);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -52,6 +53,9 @@ const Header = () => {
     }, 250);
   }
 
+  const search = () => {
+     setShowSearch(prev => !prev);
+  }
 
   const categorySelect = (value: string) => {
     setSelectedCategory(value);
@@ -87,8 +91,24 @@ const Header = () => {
             </h1>
 
 
-          <div className="flex items-center gap-6">
-            <Search className="text-gray-700 hover:text-black cursor-pointer" size={18} />
+          <div className="flex items-center gap-6 relative">
+
+            {showSearch && (
+              <input 
+                type="text"
+                placeholder="Search..."
+                className={`absolute right-12 px-2 py-1 border rounded-lg outline-none bg-gray-200/30 focus:bg-gray-200/70 hover:bg-gray-200/70 placeholder:text-gray-400/70 transition-all duration-300 ease-in-out
+                  ${showSearch 
+                      ? "opacity-100 scale-100 w-40 sm:w-52 md:w-60 lg:w-72" 
+                      : "opacity-0 scale-90 w-0 pointer-events-none"
+                    }
+                `}
+              />
+            )}
+
+            <Search 
+              onClick={search}
+              className="text-gray-700 hover:text-black cursor-pointer" size={18} />
 
             <button
               onClick={() => setOpen(true)}
