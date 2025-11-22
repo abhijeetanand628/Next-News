@@ -65,6 +65,11 @@ export default function Main() {
     return () => clearInterval(interval);
   }, [news, isPaused]);
 
+  useEffect(() => {
+    scrollToTop();
+  }, [page]);
+
+
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -149,9 +154,6 @@ export default function Main() {
               Next
             </button>
       </div>
-
-
-      {/* <LatestNews articles={news} /> */}
     </main>
   );
 }
