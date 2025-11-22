@@ -12,12 +12,15 @@ interface Category {
 interface SideBarProps {
   open: boolean;
   onClose: () => void;
-  categories: Category[];
+  categories: { label: string; value: string }[];
+  selectedCategory: string | null;
+  onSelectCategory: (value: string) => void;
+  goHome: () => void;
 }
 
-const SideBar: React.FC<SideBarProps> = ({ open, onClose, categories }) => {
+const SideBar = ({ open, onClose, categories, selectedCategory, onSelectCategory, goHome }: SideBarProps) => {
   return (
-    <aside
+    <div
       className={`
         fixed top-0 right-0 h-full w-72 bg-white/90 backdrop-blur-md shadow-lg
         transform transition-all duration-300 z-50
@@ -38,19 +41,28 @@ const SideBar: React.FC<SideBarProps> = ({ open, onClose, categories }) => {
       <nav className="px-4 py-6">
         <ul className="flex flex-col gap-3">
           {categories.map((cat) => (
-            <li key={cat.value}>
-              <Link
-                href={`/category/${cat.value}`}
-                onClick={onClose}
-                className="block px-3 py-2 rounded hover:bg-gray-100"
-              >
-                {cat.label}
-              </Link>
+            <li 
+              key={cat.value}
+              onClick={() => {
+                if(cat.value === "__home") {
+                  goHome();
+                  onClose();
+                } else {
+                  onSelectCategory(cat.value)
+                }
+              }}  
+              className={`cursor-pointer px-3 py-2 rounded hover:bg-gray-100 ${
+                cat.value === selectedCategory
+                  ? "font-bold text-black underline"
+                  : "text-gray-700"
+              }`}
+            >
+              {cat.label}
             </li>
           ))}
         </ul>
       </nav>
-    </aside>
+    </div>
   );
 };
 

@@ -23,6 +23,7 @@ const categories: Category[] = [
 const Header = () => {
 
   const [open, setOpen] = useState<boolean>(false);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -37,6 +38,19 @@ const Header = () => {
       }, 250); 
     }
   };
+
+  const categorySelect = (value: string) => {
+    setSelectedCategory(value);
+    router.push(`/category/${value}`);
+    setOpen(false);
+  }
+
+  const reorderedCategories = selectedCategory ? [
+    categories.find((c) => c.value === selectedCategory)!,
+    { label: 'Home', value:"__home"},
+    ...categories.filter((c) => c.value !== selectedCategory),
+  ]
+  : categories;
 
   return (
     <>
@@ -65,7 +79,14 @@ const Header = () => {
         </div>
       </header>
 
-      <SideBar open={open} onClose={() => setOpen(false)} categories={categories} />
+      <SideBar 
+        open={open} 
+        onClose={() => setOpen(false)} 
+        categories={reorderedCategories} 
+        selectedCategory={selectedCategory}
+        onSelectCategory={categorySelect}
+        goHome={goHomeSmooth}  
+      />
     </>
   );
 };
