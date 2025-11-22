@@ -65,6 +65,12 @@ export default function Main() {
     return () => clearInterval(interval);
   }, [news, isPaused]);
 
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
 
   return (
     <main className="px-6 md:px-12 lg:px-24 py-8">
@@ -93,12 +99,17 @@ export default function Main() {
 
       <div className="flex justify-center items-center gap-3 mt-10">
            <button
-              onClick={() => page > 1 && setPage(page - 1)}
+               onClick={() => {
+                if (page > 1) {
+                  setPage(page - 1);
+                  scrollToTop();
+                }
+              }}
               disabled={page === 1}
               className={`px-4 py-2 border rounded-lg ${
                 page === 1
                   ? "opacity-40 cursor-not-allowed"
-                  : "hover:bg-gray-100"
+                  : "hover:bg-gray-100 cursor-pointer"
               }`}
             >
               Prev
@@ -107,11 +118,14 @@ export default function Main() {
             {Array.from({ length: totalPages }, (_, idx) => idx + 1).map((num) => (
               <button
                 key={num}
-                onClick={() => setPage(num)}
+                onClick={() => {
+                  setPage(num);
+                  scrollToTop();
+                }}
                 className={`px-3 py-2 rounded-lg border ${
                   page === num
-                    ? "bg-gray-900 text-white"
-                    : "hover:bg-gray-100"
+                    ? "bg-gray-900 text-white cursor-pointer"
+                    : "hover:bg-gray-100 cursor-pointer"
                 }`}
               >
                 {num}
@@ -119,12 +133,17 @@ export default function Main() {
             ))}
 
             <button
-              onClick={() => page < totalPages && setPage(page + 1)}
+              onClick={() => {
+                if (page < totalPages) {
+                  setPage(page + 1);
+                  scrollToTop();
+                }
+              }}
               disabled={page === totalPages}
               className={`px-4 py-2 border rounded-lg ${
                 page === totalPages
                   ? "opacity-40 cursor-not-allowed"
-                  : "hover:bg-gray-100"
+                  : "hover:bg-gray-100 cursor-pointer"
               }`}
             >
               Next
