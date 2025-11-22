@@ -34,6 +34,39 @@ const Header = () => {
   ? pathname.split("/")[2]
   : null;
 
+  const payForSearch = async () => {
+    try {
+      const response = await fetch("/api/razorpay/order", {
+        method: "POST",
+        body: JSON.stringify({ amount: 99 }),
+      });
+
+      const order = await response.json();
+
+      const options: any = {
+        key: process.env.RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: "INR",
+        name: "NextNews Premium Search",
+        description: "Unlock search functionality",
+        order_id: order.id,
+
+        handler: function (response: any) {
+          localStorage.setItem("isPaid", "true");
+          alert("Payment successful! Search is now unlocked.");
+          setShowSearch(true);
+        },
+
+        theme: {color: '#4f46e5'}
+      }
+
+      const razorPay = new (window as any).Razorpay(options);
+      razorPay.open();
+    } catch (error) {
+      console.error("Payment Error", error);
+    }
+  }
+
   const goHomeSmooth = () => {
     if (pathname === "/") {
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -55,12 +88,36 @@ const Header = () => {
   }
 
   const search = () => {
-     if (showSearch) {
+    const paid = localStorage.getItem("isPaid");
+
+    // if user hasn’t paid, open payment popup
+    if (!paid) {
+      payForSearch();
+      return;
+    }
+
+    if (showSearch) {
       runSearch();
     } else {
       setShowSearch(true);
     }
   }
+
+  const runSearch = () => {
+    const paid = localStorage.getItem("isPaid");
+
+    if (!paid) {
+      payForSearch();
+      return;
+    }
+
+    if (!searchValue.trim()) return;
+
+    router.push(`/search?query=${encodeURIComponent(searchValue.trim())}`);
+
+    setShowSearch(false);
+    setSearchValue("");
+  };
 
   const categorySelect = (value: string) => {
     setSelectedCategory(value);
@@ -74,16 +131,6 @@ const Header = () => {
     ...categories.filter((c) => c.value !== selectedCategory),
   ]
   : categories;
-
-  const runSearch = () => {
-    if (!searchValue.trim()) return;
-
-    router.push(`/search?query=${encodeURIComponent(searchValue.trim())}`);
-
-    // reset search view
-    setShowSearch(false);
-    setSearchValue("");
-  }
 
   useEffect(() => {
     if (urlCategory) {
@@ -114,9 +161,7 @@ const Header = () => {
                 placeholder="Search..."
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") runSearch();
-                }}
+                onKeyDown={(e) => e.key === "Enter" && runSearch()}
                 className={`absolute right-12 px-2 py-1 border rounded-lg outline-none bg-gray-200/30 focus:bg-gray-200/70 hover:bg-gray-200/70 placeholder:text-gray-400/70 transition-all duration-300 ease-in-out
                   ${showSearch 
                       ? "opacity-100 scale-100 w-40 sm:w-52 md:w-60 lg:w-72" 
