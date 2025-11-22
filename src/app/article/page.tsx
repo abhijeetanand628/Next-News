@@ -1,10 +1,9 @@
 "use client";
-
-import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { Suspense } from 'react';
 
-export default function ArticlePage() {
+function ArticleContent() {
   const params = useSearchParams();
   const router = useRouter();
 
@@ -64,5 +63,13 @@ export default function ArticlePage() {
         </a>
       )}
     </main>
+  );
+}
+
+export default function ArticlePage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ArticleContent />
+    </Suspense>
   );
 }

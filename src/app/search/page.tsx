@@ -1,14 +1,25 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 
-export default function SearchPage() {
+interface Article {
+  source: { id: string | null; name: string };
+  author: string | null;
+  title: string;
+  description: string | null;
+  url: string;
+  urlToImage: string | null;
+  publishedAt: string;
+  content: string | null;
+}
+
+function SearchContent() {
   const params = useSearchParams();
   const query = params.get("query") || "";
 
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -43,5 +54,13 @@ export default function SearchPage() {
         ))}
       </div>
     </main>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<div className="text-center p-10">Loading search results...</div>}>
+      <SearchContent />
+    </Suspense>
   );
 }
