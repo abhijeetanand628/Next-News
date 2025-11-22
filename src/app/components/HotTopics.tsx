@@ -25,19 +25,27 @@ function timeAgo(dateString?: string) {
   return `${days} days ago`;
 }
 
-export default function HotTopics({ article }: { article: Article | null }) {
+export default function HotTopics({
+  article,
+  onMouseEnter,
+  onMouseLeave,
+}: {
+  article: Article | null;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
+}) {
   if (!article) {
     return null;
   }
 
   const image = article.urlToImage || FALLBACK_IMG;
-//   const title = article.title || "Untitled";
-//   const description = article.description || "";
-//   const source = article.source?.name || "Unknown";
-//   const published = timeAgo(article.publishedAt);
 
   return (
-    <div className="w-full flex flex-col lg:flex-row gap-6 items-stretch">
+    <div
+        className="w-full flex flex-col lg:flex-row gap-6 items-stretch"
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+    >
 
       <div className="relative lg:w-3/5 rounded-xl overflow-hidden shadow-lg">
         <img

@@ -15,9 +15,10 @@ type Article = {
 
 export default function Main() {
   const [news, setNews] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [currentHotIndex, setCurrentHotIndex] = useState(0);
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState<boolean>(true);
+  const [isPaused, setIsPaused] = useState<boolean>(false);
 
   useEffect(() => {
     const getNews = async () => {
@@ -37,6 +38,7 @@ export default function Main() {
 
   useEffect(() => {
     if (news.length === 0) return;
+    if (isPaused) return;
 
     const interval = setInterval(() => {
       setVisible(false); 
@@ -46,11 +48,11 @@ export default function Main() {
           prev === news.length - 1 ? 0 : prev + 1
         );
         setVisible(true); 
-      }, 300);
-    }, 10000);
+      }, 250);
+    }, 4000);
 
     return () => clearInterval(interval);
-  }, [news]);
+  }, [news, isPaused]);
 
   const featuredArticle = news[currentHotIndex] || null;
 
@@ -66,10 +68,16 @@ export default function Main() {
           visible ? "opacity-100" : "opacity-0"
         }`}
       >
-        <HotTopics article={featuredArticle} />
+        <HotTopics
+            article={featuredArticle}
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+            />
       </div>
 
       <h2 className="text-3xl font-bold mt-14 mb-6">Latest News</h2>
+
+      {loading && <p>Loading news...</p>}
 
       <LatestNews articles={news} />
     </main>
