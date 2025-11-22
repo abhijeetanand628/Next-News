@@ -6,9 +6,25 @@ export async function GET(request: Request) {
     }
 
     const { searchParams } = new URL(request.url);
-    const category = searchParams.get('category');
+    const category = searchParams.get("category");
+    const search = searchParams.get("search");
+
+    let url = "";
  
-    const url = `https://newsapi.org/v2/top-headlines?country=us${category ? `&category=${category}` : ""}&pageSize=50&apiKey=${apiKey}`;
+    if (search) {
+        url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(
+        search
+        )}&pageSize=50&sortBy=publishedAt&language=en&apiKey=${apiKey}`;
+    }
+
+    else if (category) {
+        url = `https://newsapi.org/v2/top-headlines?country=us&category=${category}&pageSize=50&apiKey=${apiKey}`;
+    }
+
+    else {
+        url = `https://newsapi.org/v2/top-headlines?country=us&pageSize=50&apiKey=${apiKey}`;
+    }
+
     const response = await fetch(url);
     const data = await response.json();
 
