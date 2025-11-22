@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { Search, Menu } from "lucide-react";
 import SideBar from "./SideBar";
+import { useRouter, usePathname } from "next/navigation";
+
 
 interface Category {
   label: string;
@@ -22,20 +24,32 @@ const Header = () => {
 
   const [open, setOpen] = useState<boolean>(false);
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const goHomeSmooth = () => {
+    if (pathname === "/") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      router.push("/");
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }, 250); 
+    }
   };
 
   return (
     <>
       <header className="sticky top-0 z-50 bg-white/70 backdrop-blur-md">
         <div className="flex items-center justify-between px-4 sm:px-6 md:px-12 lg:px-20 py-4">
-          <h1
-            onClick={scrollToTop}
-            className="cursor-pointer text-gray-700 hover:text-black text-lg sm:text-xl md:text-xl"
-          >
-            NextNews
-          </h1>
+          
+            <h1 
+              onClick={goHomeSmooth}
+              className="cursor-pointer text-gray-700 hover:text-black text-lg sm:text-xl md:text-xl"
+            >
+              NextNews
+            </h1>
+
 
           <div className="flex items-center gap-6">
             <Search className="text-gray-700 hover:text-black cursor-pointer" size={18} />
