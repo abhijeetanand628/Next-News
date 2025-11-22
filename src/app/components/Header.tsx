@@ -44,17 +44,29 @@ const Header = () => {
       const order = await response.json();
 
       const options: any = {
-        key: process.env.RAZORPAY_KEY_ID,
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: order.amount,
         currency: "INR",
         name: "NextNews Premium Search",
         description: "Unlock search functionality",
         order_id: order.id,
 
-        handler: function (response: any) {
-          localStorage.setItem("isPaid", "true");
-          alert("Payment successful! Search is now unlocked.");
-          setShowSearch(true);
+        handler: async function (response: any) {
+          // verify payment on server
+          const verifyRes = await fetch("/api/razorpay/verify", {
+            method: "POST",
+            body: JSON.stringify(response),
+        });
+
+        const verify = await verifyRes.json();
+
+          if (verify.success) {
+            localStorage.setItem("isPaid", "true");
+            alert("Payment successful! Search unlocked.");
+            setShowSearch(true);
+          } else {
+            alert("Payment verification failed!");
+          }
         },
 
         theme: {color: '#4f46e5'}
@@ -139,6 +151,10 @@ const Header = () => {
       setSelectedCategory(null);
     }
   }, [urlCategory]);
+
+  useEffect(() => {
+    localStorage.removeItem("isPaid")
+  }, [])
 
   return (
     <>
