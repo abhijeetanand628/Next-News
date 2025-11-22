@@ -58,22 +58,22 @@ export default function CategoryPage() {
 
   return (
     <main className="px-4 sm:px-6 md:px-12 lg:px-20 py-8">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-4xl font-bold capitalize">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold capitalize">
           {slug} News
         </h1>
 
         <div className="flex gap-3">
           <button
             onClick={() => router.back()}
-            className="px-5 py-3 bg-gray-100 text-gray-700 cursor-pointer rounded-xl shadow-sm hover:bg-gray-200 hover:shadow-md transition-all font-medium"
+            className="px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-base md:px-5 md:py-3 md:text-base bg-gray-100 text-gray-700 rounded-xl shadow-sm cursor-pointer hover:bg-gray-200 hover:shadow-md transition-all font-medium"
           >
             ← Back
           </button>
 
           <Link
             href="/"
-            className="px-5 py-3 bg-blue-500 text-white rounded-xl shadow-sm hover:bg-blue-700 hover:shadow-md transition-all font-medium"
+            className="px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-base md:px-5 md:py-3 md:text-base bg-blue-500 text-white rounded-xl shadow-sm hover:bg-blue-700 hover:shadow-md transition-all font-medium"
           >
             Home
           </Link>

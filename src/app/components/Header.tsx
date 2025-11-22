@@ -69,6 +69,8 @@ const Header = () => {
   useEffect(() => {
     if (urlCategory) {
       setSelectedCategory(urlCategory);
+    } else {
+      setSelectedCategory(null);
     }
   }, [urlCategory]);
 
