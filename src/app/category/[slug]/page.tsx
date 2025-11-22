@@ -1,3 +1,4 @@
+import Link from "next/link";
 
 interface PageProps {
   params: {
@@ -55,29 +56,48 @@ export default async function CategoryPage(props: PageProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {articles.map((item: any, i: number) => (
-          <article key={i} className="bg-white rounded-xl shadow-md hover:shadow-lg overflow-hidden cursor-pointer hover:scale-105 transition-all duration-300">
-            {item.urlToImage && (
-              <div className="relative h-48">
+          <Link
+            href={{
+              pathname: "/article",
+              query: {
+                title: item.title,
+                description: item.description,
+                content: item.content,
+                image: item.urlToImage,
+                source: item.source?.name,
+                published: item.publishedAt,
+                url: item.url,
+              },
+            }}
+            key={i}
+          >
+            <article
+              className="bg-white rounded-xl shadow-md hover:shadow-lg overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02]"
+            >
+              {item.urlToImage && (
                 <img
                   src={item.urlToImage}
                   alt={item.title}
                   className="w-full h-48 object-cover rounded-t-xl"
                 />
-              </div>
-            )}
+              )}
 
-            <div className="p-4">
-              <h2 className="text-lg font-semibold">{item.title}</h2>
-              <p className="text-sm mt-2 text-gray-600 line-clamp-3">
-                {item.description}
-              </p>
+              <div className="p-4">
+                <h2 className="text-lg font-semibold leading-tight">{item.title}</h2>
 
-              <div className="text-xs mt-4 text-gray-500">
-                {item.source?.name} —{" "}
-                {item.publishedAt ? new Date(item.publishedAt).toLocaleString() : ""}
+                <p className="text-sm mt-2 text-gray-600 line-clamp-3">
+                  {item.description}
+                </p>
+
+                <div className="text-xs mt-4 text-gray-500">
+                  {item.source?.name} —{" "}
+                  {item.publishedAt
+                    ? new Date(item.publishedAt).toLocaleString()
+                    : ""}
+                </div>
               </div>
-            </div>
-          </article>
+            </article>
+          </Link>
         ))}
       </div>
     </main>
