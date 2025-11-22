@@ -58,7 +58,28 @@ export default function CategoryPage() {
 
   return (
     <main className="px-4 sm:px-6 md:px-12 lg:px-20 py-8">
-      <h1 className="text-4xl font-bold capitalize mb-6">{slug} News</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-4xl font-bold capitalize">
+          {slug} News
+        </h1>
+
+        <div className="flex gap-3">
+          <button
+            onClick={() => router.back()}
+            className="px-5 py-3 bg-gray-100 text-gray-700 cursor-pointer rounded-xl shadow-sm hover:bg-gray-200 hover:shadow-md transition-all font-medium"
+          >
+            ← Back
+          </button>
+
+          <Link
+            href="/"
+            className="px-5 py-3 bg-blue-500 text-white rounded-xl shadow-sm hover:bg-blue-700 hover:shadow-md transition-all font-medium"
+          >
+            Home
+          </Link>
+
+        </div>
+      </div>
 
       {loading && <p>Loading news...</p>}
 

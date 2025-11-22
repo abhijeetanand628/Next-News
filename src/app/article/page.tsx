@@ -41,14 +41,14 @@ export default function ArticlePage() {
 
         <button
           onClick={() => router.back()}
-          className="px-5 py-3 bg-gray-100 text-gray-700 cursor-pointer rounded-xl shadow-sm hover:bg-gray-200 hover:shadow-md transition-allfont-medium"
+          className="px-5 py-3 bg-gray-100 text-gray-700 cursor-pointer rounded-xl shadow-sm hover:bg-gray-200 hover:shadow-md transition-all font-medium"
         >
           ← Back
         </button>
 
         <Link
           href="/"
-          className="px-5 py-3 bg-blue-500 text-white rounded-xl shadow-sm hover:bg-blue-700 hover:shadow-md transition-allfont-medium"
+          className="px-5 py-3 bg-blue-500 text-white rounded-xl shadow-sm hover:bg-blue-700 hover:shadow-md transition-all font-medium"
         >
           Home
         </Link>
