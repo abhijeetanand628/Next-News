@@ -25,7 +25,8 @@ const Header = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [showSearch, setShowSearch] = useState<boolean>(false);
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState<string | number>("");
+  const [notify, setNotify] = useState<string>("");
 
   const router = useRouter();
   const pathname = usePathname();
@@ -33,6 +34,11 @@ const Header = () => {
   const urlCategory = pathname.startsWith("/category/")
   ? pathname.split("/")[2]
   : null;
+
+  const showMsg = (msg: string) => {
+    setNotify(msg);
+    setTimeout(() => setNotify(""), 3000);
+  }
 
   const payForSearch = async () => {
     try {
@@ -62,10 +68,10 @@ const Header = () => {
 
           if (verify.success) {
             localStorage.setItem("isPaid", "true");
-            alert("Payment successful! Search unlocked.");
+            showMsg("Payment successful! Search unlocked.");
             setShowSearch(true);
           } else {
-            alert("Payment verification failed!");
+            showMsg("Payment verification failed!");
           }
         },
 
@@ -76,6 +82,7 @@ const Header = () => {
       razorPay.open();
     } catch (error) {
       console.error("Payment Error", error);
+      showMsg("Something went wrong!")
     }
   }
 
@@ -158,6 +165,25 @@ const Header = () => {
 
   return (
     <>
+
+      {notify && (
+        <div className="
+          fixed inset-0 flex items-center justify-center
+          z-[999]
+        +  backdrop-blur-sm bg-black/30
+        ">
+          <div
+            className="
+              w-64 h-24 bg-green-500 text-white 
+              flex items-center justify-center text-center
+              rounded-xl shadow-2xl animate-fade-in
+            "
+          >
+            {notify}
+          </div>
+        </div>
+      )}
+      
       <header className="sticky top-0 z-50 bg-white/70 backdrop-blur-md">
         <div className="flex items-center justify-between px-4 sm:px-6 md:px-12 lg:px-20 py-4">
           
