@@ -1,5 +1,6 @@
 "use client";
 import { X } from "lucide-react";
+import { useEffect } from "react";
 
 interface Category {
   label: string;
@@ -16,6 +17,18 @@ interface SideBarProps {
 }
 
 const SideBar = ({ open, onClose, categories, selectedCategory, onSelectCategory, goHome }: SideBarProps) => {
+
+    useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";  
+    } else {
+      document.body.style.overflow = "auto";    
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";    
+    };
+  }, [open]);
   return (
     <>
       {open && (
