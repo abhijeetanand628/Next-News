@@ -1,7 +1,7 @@
 "use client";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { Suspense, useCallback } from 'react';
+import { Suspense, useCallback, useEffect } from 'react';
 
 function ArticleContent() {
   const params = useSearchParams();
@@ -17,7 +17,7 @@ function ArticleContent() {
 
   const originalSource = useCallback(
     async (articleUrl: string) => {
-      const paid = localStorage.getItem("isPaid");
+      const paid = sessionStorage.getItem("articlePaid");
 
       if (paid) {
         window.open(articleUrl, "_blank");
@@ -54,7 +54,7 @@ function ArticleContent() {
             const verify = await verifyRes.json();
 
             if (verify.success) {
-              localStorage.setItem("isPaid", "true");
+              sessionStorage.setItem("articlePaid", "true");
               window.open(articleUrl, "_blank");
             } else {
               alert("Payment verification failed!");

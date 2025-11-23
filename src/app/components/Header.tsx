@@ -67,7 +67,7 @@ const Header = () => {
         const verify = await verifyRes.json();
 
           if (verify.success) {
-            localStorage.setItem("isPaid", "true");
+            localStorage.setItem("searchPaid", "true");
             showMsg("Payment successful! Search unlocked.");
             setShowSearch(true);
           } else {
@@ -107,7 +107,7 @@ const Header = () => {
   }
 
   const search = () => {
-    const paid = localStorage.getItem("isPaid");
+    const paid = localStorage.getItem("searchPaid");
 
     // if user hasn’t paid, open payment popup
     if (!paid) {
@@ -123,7 +123,7 @@ const Header = () => {
   }
 
   const runSearch = () => {
-    const paid = localStorage.getItem("isPaid");
+    const paid = localStorage.getItem("searchPaid");
 
     if (!paid) {
       payForSearch();
@@ -160,7 +160,7 @@ const Header = () => {
   }, [urlCategory]);
 
   useEffect(() => {
-    localStorage.removeItem("isPaid")
+    localStorage.removeItem("searchPaid")
   }, [])
 
   return (
