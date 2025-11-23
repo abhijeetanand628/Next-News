@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import CategorySkeleton from "@/app/components/skeletons/CategorySkeleton";
 
 type Article = {
   title: string;
@@ -55,6 +56,8 @@ export default function CategoryPage() {
     setPage(num);
     router.push(`/category/${slug}?page=${num}`);
   };
+
+  if (loading) return <CategorySkeleton />;
 
   return (
     <main className="px-4 sm:px-6 md:px-12 lg:px-20 py-8">
@@ -144,9 +147,7 @@ export default function CategoryPage() {
             Prev
           </button>
 
-          {/* Show page numbers with smart truncation */}
           {totalPages <= 4 ? (
-            // Show all pages if 4 or fewer
             Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
               <button
                 key={num}
@@ -161,9 +162,7 @@ export default function CategoryPage() {
               </button>
             ))
           ) : (
-            // Show 1 2 3 4 ... last page for more than 4 pages
             <>
-              {/* Show pages 1, 2, 3, 4 */}
               {[1, 2, 3, 4].map((num) => (
                 <button
                   key={num}
@@ -178,10 +177,8 @@ export default function CategoryPage() {
                 </button>
               ))}
 
-              {/* Show ellipsis */}
               <span className="px-0.5 sm:px-1 text-gray-500 text-xs sm:text-sm shrink-0">...</span>
 
-              {/* Show last page */}
               <button
                 onClick={() => changePage(totalPages)}
                 className={`px-2 py-1.5 sm:px-2.5 md:px-3 sm:py-2 text-xs sm:text-sm rounded-lg border min-w-7 sm:min-w-8 md:min-w-10 transition-all shrink-0 ${

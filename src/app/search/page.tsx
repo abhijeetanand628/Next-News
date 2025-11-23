@@ -1,8 +1,9 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
+import SearchSkeleton from "../components/skeletons/SearchSkeleton";
 
 interface Article {
   source: { id: string | null; name: string };
@@ -17,6 +18,7 @@ interface Article {
 
 function SearchContent() {
   const params = useSearchParams();
+  const router = useRouter();
   const query = params.get("query") || "";
 
   const [results, setResults] = useState<Article[]>([]);
@@ -34,32 +36,59 @@ function SearchContent() {
 
   return (
     <main className="px-6 py-8">
-      <h1 className="text-3xl font-bold mb-4">
-        Search Results for: <span className="text-blue-600">{query}</span>
-      </h1>
 
-      {loading && <p>Loading search results...</p>}
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">
+          Search Results for:{" "}
+          <span className="text-blue-600">{query}</span>
+        </h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {results.map((item, i) => (
-          <Link key={i} href={item.url} target="_blank">
-            <article className="p-4 border rounded-xl shadow-sm hover:shadow-md transition">
-              {item.urlToImage && (
-                <img src={item.urlToImage} className="rounded mb-3" />
-              )}
-              <h2 className="font-semibold">{item.title}</h2>
-              <p className="text-sm text-gray-600 mt-1">{item.description}</p>
-            </article>
+        <div className="flex gap-3">
+          <button
+            onClick={() => router.back()}
+            className="px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-base md:px-5 md:py-3 md:text-base bg-gray-100 text-gray-700 rounded-xl shadow-sm cursor-pointer hover:bg-gray-200 hover:shadow-md transition-all font-medium"
+          >
+            ← Back
+          </button>
+
+          <Link
+            href="/"
+            className="px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-base md:px-5 md:py-3 md:text-base bg-blue-500 text-white rounded-xl shadow-sm cursor-pointer hover:bg-blue-700 hover:shadow-md transition-all font-medium"
+          >
+            Home
           </Link>
-        ))}
+        </div>
       </div>
+
+      {loading && <SearchSkeleton />}
+
+      {!loading && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {results.map((item, i) => (
+            <Link key={i} href={item.url} target="_blank">
+              <article className="p-4 border rounded-xl shadow-sm hover:shadow-md transition">
+                {item.urlToImage && (
+                  <img
+                    src={item.urlToImage}
+                    className="rounded mb-3 w-full h-40 object-cover"
+                  />
+                )}
+                <h2 className="font-semibold">{item.title}</h2>
+                <p className="text-sm text-gray-600 mt-1 line-clamp-3">
+                  {item.description}
+                </p>
+              </article>
+            </Link>
+          ))}
+        </div>
+      )}
     </main>
   );
 }
 
 export default function SearchPage() {
   return (
-    <Suspense fallback={<div className="text-center p-10">Loading search results...</div>}>
+    <Suspense fallback={<SearchSkeleton />}>
       <SearchContent />
     </Suspense>
   );

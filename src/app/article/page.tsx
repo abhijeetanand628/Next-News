@@ -2,6 +2,7 @@
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Suspense, useCallback, useEffect } from 'react';
+import ArticleSkeleton from "../components/skeletons/ArticleSkeleton";
 
 function ArticleContent() {
   const params = useSearchParams();
@@ -95,18 +96,17 @@ function ArticleContent() {
 
       <p className="text-base text-gray-600 whitespace-pre-line">{content}</p>
 
-      <div className="flex flex-col sm:flex-row justify-center gap-4 mt-10">
-
+      <div className="flex justify-center gap-3 mt-10 w-full">
         <button
           onClick={() => router.back()}
-          className="px-5 py-3 bg-gray-100 text-gray-700 cursor-pointer rounded-xl shadow-sm hover:bg-gray-200 hover:shadow-md transition-all font-medium"
+          className="px-4 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg shadow-sm hover:bg-gray-200 hover:shadow transition-all font-medium"
         >
           ← Back
         </button>
 
         <Link
           href="/"
-          className="px-5 py-3 bg-blue-500 text-white rounded-xl shadow-sm hover:bg-blue-700 hover:shadow-md transition-all font-medium"
+          className="px-4 py-2 text-sm bg-blue-500 text-white rounded-lg shadow-sm hover:bg-blue-700 hover:shadow transition-all font-medium"
         >
           Home
         </Link>
@@ -128,7 +128,7 @@ function ArticleContent() {
 
 export default function ArticlePage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<ArticleSkeleton />}>
       <ArticleContent />
     </Suspense>
   );

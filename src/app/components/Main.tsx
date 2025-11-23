@@ -1,8 +1,9 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import HotTopics from "./HotTopics";
 import LatestNews from "./LatestNews";
+import HotTopicsSkeleton from "./skeletons/HotTopicsSkeleton";
+import LatestNewsSkeleton from "./skeletons/LatestNewsSkeleton";
 
 type Article = {
   title: string;
@@ -82,48 +83,72 @@ export default function Main() {
 
       <h1 className="text-4xl font-bold mb-6">Hot Topics</h1>
 
-      {loading && <p>Loading news...</p>}
-
-      <div
-        className={`transition-opacity duration-300 ${
-          visible ? "opacity-100" : "opacity-0"
-        }`}
-      >
-        <HotTopics
-          article={featuredArticle}
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-        />
-      </div>
+      {loading ? (
+        <HotTopicsSkeleton />
+      ) : (
+        <div
+          className={`transition-opacity duration-300 ${
+            visible ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          <HotTopics
+            article={featuredArticle}
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+          />
+        </div>
+      )}
 
       <h2 className="text-3xl font-bold mt-14 mb-6">Latest News</h2>
-      
-        {loading && <p>Loading news...</p>}
 
-      <LatestNews articles={paginatedNews} />
+      {loading ? (
+        <LatestNewsSkeleton />
+      ) : (
+        <LatestNews articles={paginatedNews} />
+      )}
 
-      <div className="flex flex-nowrap justify-center items-center gap-1.5 sm:gap-2 md:gap-3 mt-10 px-2 overflow-x-auto">
-           <button
-               onClick={() => {
-                if (page > 1) {
-                  setPage(page - 1);
+      {!loading && news.length > 0 && (
+        <div className="flex flex-nowrap justify-center items-center gap-1.5 sm:gap-2 md:gap-3 mt-10 px-2 overflow-x-auto">
+
+          {/* Prev */}
+          <button
+            onClick={() => {
+              if (page > 1) {
+                setPage(page - 1);
+                scrollToTop();
+              }
+            }}
+            disabled={page === 1}
+            className={`px-2 py-1.5 sm:px-3 md:px-4 sm:py-2 text-xs sm:text-sm border rounded-lg transition-all whitespace-nowrap shrink-0 ${
+              page === 1
+                ? "opacity-40 cursor-not-allowed"
+                : "hover:bg-gray-100 cursor-pointer active:scale-95"
+            }`}
+          >
+            Prev
+          </button>
+
+          {/* Page Buttons */}
+          {totalPages <= 4 ? (
+            Array.from({ length: totalPages }, (_, idx) => idx + 1).map((num) => (
+              <button
+                key={num}
+                onClick={() => {
+                  setPage(num);
                   scrollToTop();
-                }
-              }}
-              disabled={page === 1}
-              className={`px-2 py-1.5 sm:px-3 md:px-4 sm:py-2 text-xs sm:text-sm border rounded-lg transition-all whitespace-nowrap shrink-0 ${
-                page === 1
-                  ? "opacity-40 cursor-not-allowed"
-                  : "hover:bg-gray-100 cursor-pointer active:scale-95"
-              }`}
-            >
-              Prev
-            </button>
-
-            {/* Show page numbers with smart truncation */}
-            {totalPages <= 4 ? (
-              // Show all pages if 4 or fewer
-              Array.from({ length: totalPages }, (_, idx) => idx + 1).map((num) => (
+                }}
+                className={`px-2 py-1.5 sm:px-2.5 md:px-3 sm:py-2 text-xs sm:text-sm rounded-lg border min-w-7 sm:min-w-8 md:min-w-10 transition-all shrink-0 ${
+                  page === num
+                    ? "bg-gray-900 text-white cursor-pointer"
+                    : "hover:bg-gray-100 cursor-pointer active:scale-95"
+                }`}
+              >
+                {num}
+              </button>
+            ))
+          ) : (
+            <>
+              {[1, 2, 3, 4].map((num) => (
                 <button
                   key={num}
                   onClick={() => {
@@ -138,65 +163,45 @@ export default function Main() {
                 >
                   {num}
                 </button>
-              ))
-            ) : (
-              // Show 1 2 3 4 ... last page for more than 4 pages
-              <>
-                {/* Show pages 1, 2, 3, 4 */}
-                {[1, 2, 3, 4].map((num) => (
-                  <button
-                    key={num}
-                    onClick={() => {
-                      setPage(num);
-                      scrollToTop();
-                    }}
-                    className={`px-2 py-1.5 sm:px-2.5 md:px-3 sm:py-2 text-xs sm:text-sm rounded-lg border min-w-7 sm:min-w-8 md:min-w-10 transition-all shrink-0 ${
-                      page === num
-                        ? "bg-gray-900 text-white cursor-pointer"
-                        : "hover:bg-gray-100 cursor-pointer active:scale-95"
-                    }`}
-                  >
-                    {num}
-                  </button>
-                ))}
+              ))}
 
-                {/* Show ellipsis */}
-                <span className="px-0.5 sm:px-1 text-gray-500 text-xs sm:text-sm shrink-0">...</span>
+              <span className="px-0.5 sm:px-1 text-gray-500 text-xs sm:text-sm shrink-0">...</span>
 
-                {/* Show last page */}
-                <button
-                  onClick={() => {
-                    setPage(totalPages);
-                    scrollToTop();
-                  }}
-                  className={`px-2 py-1.5 sm:px-2.5 md:px-3 sm:py-2 text-xs sm:text-sm rounded-lg border min-w-7 sm:min-w-8 md:min-w-10 transition-all shrink-0 ${
-                    page === totalPages
-                      ? "bg-gray-900 text-white cursor-pointer"
-                      : "hover:bg-gray-100 cursor-pointer active:scale-95"
-                  }`}
-                >
-                  {totalPages}
-                </button>
-              </>
-            )}
-
-            <button
-              onClick={() => {
-                if (page < totalPages) {
-                  setPage(page + 1);
+              <button
+                onClick={() => {
+                  setPage(totalPages);
                   scrollToTop();
-                }
-              }}
-              disabled={page === totalPages}
-              className={`px-2 py-1.5 sm:px-3 md:px-4 sm:py-2 text-xs sm:text-sm border rounded-lg transition-all whitespace-nowrap shrink-0 ${
-                page === totalPages
-                  ? "opacity-40 cursor-not-allowed"
-                  : "hover:bg-gray-100 cursor-pointer active:scale-95"
-              }`}
-            >
-              Next
-            </button>
-      </div>
+                }}
+                className={`px-2 py-1.5 sm:px-2.5 md:px-3 sm:py-2 text-xs sm:text-sm rounded-lg border min-w-7 sm:min-w-8 md:min-w-10 transition-all shrink-0 ${
+                  page === totalPages
+                    ? "bg-gray-900 text-white cursor-pointer"
+                    : "hover:bg-gray-100 cursor-pointer active:scale-95"
+                }`}
+              >
+                {totalPages}
+              </button>
+            </>
+          )}
+
+          {/* Next */}
+          <button
+            onClick={() => {
+              if (page < totalPages) {
+                setPage(page + 1);
+                scrollToTop();
+              }
+            }}
+            disabled={page === totalPages}
+            className={`px-2 py-1.5 sm:px-3 md:px-4 sm:py-2 text-xs sm:text-sm border rounded-lg transition-all whitespace-nowrap shrink-0 ${
+              page === totalPages
+                ? "opacity-40 cursor-not-allowed"
+                : "hover:bg-gray-100 cursor-pointer active:scale-95"
+            }`}
+          >
+            Next
+          </button>
+        </div>
+      )}
     </main>
   );
 }
