@@ -1,7 +1,7 @@
 "use client";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { Suspense } from 'react';
+import { Suspense, useCallback } from 'react';
 
 function ArticleContent() {
   const params = useSearchParams();
@@ -14,6 +14,65 @@ function ArticleContent() {
   const source = params.get("source");
   const published = params.get("published");
   const url = params.get("url");
+
+  const originalSource = useCallback(
+    async (articleUrl: string) => {
+      const paid = localStorage.getItem("isPaid");
+
+      if (paid) {
+        window.open(articleUrl, "_blank");
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/razorpay/order", {
+          method: "POST",
+          body: JSON.stringify({ amount: 299 }),
+        });
+
+        const order = await response.json();
+
+        const options: any = {
+          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
+          amount: order.amount,
+          currency: "INR",
+          name: "NextNews Premium Access",
+          description: "Unlock full article source",
+          order_id: order.id,
+
+          handler: async function (response: any) {
+            const verifyRes = await fetch("/api/razorpay/verify", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
+
+            const verify = await verifyRes.json();
+
+            if (verify.success) {
+              localStorage.setItem("isPaid", "true");
+              window.open(articleUrl, "_blank");
+            } else {
+              alert("Payment verification failed!");
+            }
+          },
+
+          theme: { color: "#4f46e5" },
+        };
+
+        const razorPay = new (window as any).Razorpay(options);
+        razorPay.open();
+      } catch (error) {
+        console.error("Payment Error", error);
+        alert("Something went wrong!");
+      }
+    },
+    []
+  );
 
   return (
     <main className="px-4 sm:px-6 md:px-12 lg:px-20 py-8 max-w-3xl mx-auto">
@@ -54,13 +113,12 @@ function ArticleContent() {
       </div>
 
       {url && (
-        <a
-          href={url}
-          target="_blank"
-          className="block mt-6 text-center text-blue-600 underline font-medium"
+        <button
+          onClick={() => originalSource(url!)}
+          className="block mt-6 text-center text-blue-600 underline font-medium cursor-pointer"
         >
           Read Original Source →
-        </a>
+        </button>
       )}
     </main>
   );
