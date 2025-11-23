@@ -1,36 +1,225 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NextNews
 
-## Getting Started
+A modern, feature-rich news aggregation platform built with Next.js that provides real-time news updates from various categories. The application includes premium features accessible through Razorpay payment integration.
 
-First, run the development server:
+## 🚀 Features
 
+- **Hot Topics Carousel**: Auto-rotating featured news articles with smooth transitions
+- **Latest News Grid**: Paginated display of the most recent news articles
+- **Category Filtering**: Browse news by categories (Technology, Business, Sports, Entertainment, Health, Gaming, General)
+- **Search Functionality**: Premium search feature to find articles by keywords
+- **Article Details**: Detailed article view with full content and metadata
+- **Payment Integration**: Razorpay integration for premium features (search and article access)
+- **Responsive Design**: Fully responsive UI built with Tailwind CSS
+- **Smooth Navigation**: Intuitive navigation with sidebar menu and smooth scrolling
+
+## 🛠️ Tech Stack
+
+- **Framework**: Next.js 16.0.3 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS 4
+- **Icons**: Lucide React
+- **Payment Gateway**: Razorpay
+- **News API**: NewsAPI.org
+- **React**: 19.2.0
+- **React Compiler**: Enabled for optimized performance
+
+## 📋 Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- Node.js (v18 or higher)
+- npm, yarn, pnpm, or bun
+- A NewsAPI.org API key ([Get one here](https://newsapi.org/))
+- Razorpay account (for payment features) - [Sign up here](https://razorpay.com/)
+
+## 🔧 Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd nextnews
+```
+
+2. Install dependencies:
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
+
+3. Create a `.env.local` file in the root directory and add the following environment variables:
+
+```env
+# NewsAPI Configuration
+NEWS_API_KEY=your_newsapi_key_here
+
+# Razorpay Configuration
+RAZORPAY_KEY_ID=your_razorpay_key_id
+RAZORPAY_KEY_SECRET=your_razorpay_key_secret
+NEXT_PUBLIC_RAZORPAY_KEY_ID=your_razorpay_key_id
+```
+
+4. Run the development server:
 ```bash
 npm run dev
 # or
 yarn dev
 # or
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📁 Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+nextnews/
+├── src/
+│   └── app/
+│       ├── api/
+│       │   ├── news/
+│       │   │   └── route.ts          # News API proxy endpoint
+│       │   └── razorpay/
+│       │       ├── order/
+│       │       │   └── route.ts      # Razorpay order creation
+│       │       └── verify/
+│       │           └── route.ts      # Payment verification
+│       ├── article/
+│       │   └── page.tsx              # Article detail page
+│       ├── category/
+│       │   └── [slug]/
+│       │       └── page.tsx          # Category-specific news page
+│       ├── search/
+│       │   └── page.tsx              # Search results page
+│       ├── components/
+│       │   ├── Header.tsx            # Navigation header with search
+│       │   ├── Footer.tsx            # Site footer
+│       │   ├── Main.tsx              # Home page main component
+│       │   ├── HotTopics.tsx        # Featured news carousel
+│       │   ├── LatestNews.tsx       # News grid component
+│       │   └── SideBar.tsx          # Category navigation sidebar
+│       ├── layout.tsx                # Root layout
+│       ├── page.tsx                  # Home page
+│       └── globals.css               # Global styles
+├── public/                           # Static assets
+├── next.config.ts                    # Next.js configuration
+├── tsconfig.json                     # TypeScript configuration
+└── package.json                      # Dependencies and scripts
+```
 
-## Learn More
+## 🔌 API Routes
 
-To learn more about Next.js, take a look at the following resources:
+### `/api/news`
+Fetches news articles from NewsAPI.org with support for:
+- **Query Parameters**:
+  - `category`: Filter by news category (optional)
+  - `search`: Search for articles by keyword (optional)
+- **Response**: JSON array of news articles
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### `/api/razorpay/order`
+Creates a Razorpay order for payment processing.
+- **Method**: POST
+- **Body**: `{ amount: number }`
+- **Response**: Razorpay order object
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### `/api/razorpay/verify`
+Verifies Razorpay payment signature.
+- **Method**: POST
+- **Body**: Payment response from Razorpay
+- **Response**: `{ success: boolean }`
 
-## Deploy on Vercel
+## 💳 Payment Features
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The application includes premium features that require payment:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Search Functionality**: ₹99 - Unlocks the ability to search for news articles
+2. **Article Access**: ₹299 - Grants access to read full articles from original sources
+
+Payments are processed through Razorpay and verified server-side for security.
+
+## 🎨 Features in Detail
+
+### Home Page
+- Displays hot topics in an auto-rotating carousel (changes every 3 seconds)
+- Shows latest news in a paginated grid layout
+- Responsive design that works on all screen sizes
+
+### Category Pages
+- Filter news by specific categories
+- Paginated results (6 articles per page)
+- Smooth navigation and scrolling
+
+### Search Page
+- Premium feature requiring payment
+- Search across all news articles
+- Results displayed in a grid layout
+
+### Article Page
+- Detailed view of individual articles
+- Shows article image, title, description, and content
+- Option to read original source (premium feature)
+
+## 🚀 Deployment
+
+### Build for Production
+
+```bash
+npm run build
+```
+
+### Start Production Server
+
+```bash
+npm start
+```
+
+### Deploy on Vercel
+
+The easiest way to deploy is using [Vercel](https://vercel.com):
+
+1. Push your code to GitHub
+2. Import your repository in Vercel
+3. Add your environment variables in Vercel dashboard
+4. Deploy!
+
+For more deployment options, check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying).
+
+## 🔒 Environment Variables
+
+Make sure to set up the following environment variables:
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `NEWS_API_KEY` | Your NewsAPI.org API key | Yes |
+| `RAZORPAY_KEY_ID` | Razorpay Key ID | Yes (for payments) |
+| `RAZORPAY_KEY_SECRET` | Razorpay Key Secret | Yes (for payments) |
+| `NEXT_PUBLIC_RAZORPAY_KEY_ID` | Public Razorpay Key ID | Yes (for payments) |
+
+## 📝 Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm start` - Start production server
+- `npm run lint` - Run ESLint
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+This project is private and proprietary.
+
+## 🙏 Acknowledgments
+
+- [NewsAPI.org](https://newsapi.org/) for providing news data
+- [Razorpay](https://razorpay.com/) for payment processing
+- [Next.js](https://nextjs.org/) for the amazing framework
+- [Tailwind CSS](https://tailwindcss.com/) for styling utilities
+
+---
+
+Built with ❤️ using Next.js
