@@ -25,7 +25,7 @@ const Header = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [showSearch, setShowSearch] = useState<boolean>(false);
-  const [searchValue, setSearchValue] = useState<string | number>("");
+  const [searchValue, setSearchValue] = useState<string>("");
   const [notify, setNotify] = useState<string>("");
 
   const router = useRouter();

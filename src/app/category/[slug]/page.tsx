@@ -130,41 +130,78 @@ export default function CategoryPage() {
 
       {/* Pagination */}
       {news.length > 0 && (
-        <div className="flex justify-center items-center gap-3 mt-10">
+        <div className="flex flex-nowrap justify-center items-center gap-1.5 sm:gap-2 md:gap-3 mt-10 px-2 overflow-x-auto">
 
           <button
             onClick={() => page > 1 && changePage(page - 1)}
             disabled={page === 1}
-            className={`px-4 py-2 border rounded-lg ${
+            className={`px-2 py-1.5 sm:px-3 md:px-4 sm:py-2 text-xs sm:text-sm border rounded-lg transition-all whitespace-nowrap shrink-0 ${
               page === 1
                 ? "opacity-40 cursor-not-allowed"
-                : "hover:bg-gray-100 cursor-pointer"
+                : "hover:bg-gray-100 cursor-pointer active:scale-95"
             }`}
           >
             Prev
           </button>
 
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
-            <button
-              key={num}
-              onClick={() => changePage(num)}
-              className={`px-3 py-2 rounded-lg border ${
-                page === num
-                  ? "bg-gray-900 text-white cursor-pointer"
-                  : "hover:bg-gray-100 cursor-pointer"
-              }`}
-            >
-              {num}
-            </button>
-          ))}
+          {/* Show page numbers with smart truncation */}
+          {totalPages <= 4 ? (
+            // Show all pages if 4 or fewer
+            Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
+              <button
+                key={num}
+                onClick={() => changePage(num)}
+                className={`px-2 py-1.5 sm:px-2.5 md:px-3 sm:py-2 text-xs sm:text-sm rounded-lg border min-w-7 sm:min-w-8 md:min-w-10 transition-all shrink-0 ${
+                  page === num
+                    ? "bg-gray-900 text-white cursor-pointer"
+                    : "hover:bg-gray-100 cursor-pointer active:scale-95"
+                }`}
+              >
+                {num}
+              </button>
+            ))
+          ) : (
+            // Show 1 2 3 4 ... last page for more than 4 pages
+            <>
+              {/* Show pages 1, 2, 3, 4 */}
+              {[1, 2, 3, 4].map((num) => (
+                <button
+                  key={num}
+                  onClick={() => changePage(num)}
+                  className={`px-2 py-1.5 sm:px-2.5 md:px-3 sm:py-2 text-xs sm:text-sm rounded-lg border min-w-7 sm:min-w-8 md:min-w-10 transition-all shrink-0 ${
+                    page === num
+                      ? "bg-gray-900 text-white cursor-pointer"
+                      : "hover:bg-gray-100 cursor-pointer active:scale-95"
+                  }`}
+                >
+                  {num}
+                </button>
+              ))}
+
+              {/* Show ellipsis */}
+              <span className="px-0.5 sm:px-1 text-gray-500 text-xs sm:text-sm shrink-0">...</span>
+
+              {/* Show last page */}
+              <button
+                onClick={() => changePage(totalPages)}
+                className={`px-2 py-1.5 sm:px-2.5 md:px-3 sm:py-2 text-xs sm:text-sm rounded-lg border min-w-7 sm:min-w-8 md:min-w-10 transition-all shrink-0 ${
+                  page === totalPages
+                    ? "bg-gray-900 text-white cursor-pointer"
+                    : "hover:bg-gray-100 cursor-pointer active:scale-95"
+                }`}
+              >
+                {totalPages}
+              </button>
+            </>
+          )}
 
           <button
             onClick={() => page < totalPages && changePage(page + 1)}
             disabled={page === totalPages}
-            className={`px-4 py-2 border rounded-lg ${
+            className={`px-2 py-1.5 sm:px-3 md:px-4 sm:py-2 text-xs sm:text-sm border rounded-lg transition-all whitespace-nowrap shrink-0 ${
               page === totalPages
                 ? "opacity-40 cursor-not-allowed"
-                : "hover:bg-gray-100 cursor-pointer"
+                : "hover:bg-gray-100 cursor-pointer active:scale-95"
             }`}
           >
             Next
