@@ -113,12 +113,14 @@ function ArticleContent() {
       </div>
 
       {url && (
-        <button
-          onClick={() => originalSource(url!)}
-          className="block mt-6 text-center text-blue-600 underline font-medium cursor-pointer"
-        >
-          Read Original Source →
-        </button>
+        <div className="mt-10 flex justify-center">
+          <button
+            onClick={() => originalSource(url!)}
+            className="px-6 py-3 bg-purple-600 cursor-pointer text-white rounded-xl shadow-md hover:bg-purple-700 hover:shadow-lg transition-all font-mediumtext-l"
+          >
+            Read Original Source →
+          </button>
+        </div>
       )}
     </main>
   );
