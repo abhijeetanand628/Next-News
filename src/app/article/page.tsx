@@ -1,7 +1,7 @@
 "use client";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { Suspense, useCallback, useEffect } from 'react';
+import { Suspense, useCallback, useEffect, useState } from 'react';
 import ArticleSkeleton from "../components/skeletons/ArticleSkeleton";
 
 function ArticleContent() {
@@ -15,6 +15,12 @@ function ArticleContent() {
   const source = params.get("source");
   const published = params.get("published");
   const url = params.get("url");
+
+  const [isClient, setIsClient] = useState(false);
+  
+  useEffect(() => {
+    setIsClient(true);
+  }, [])
 
   const originalSource = useCallback(
     async (articleUrl: string) => {
@@ -89,7 +95,9 @@ function ArticleContent() {
 
       <div className="text-sm text-gray-500 mb-6">
         {source && <span>{source} • </span>}
-        {published && <span>{new Date(published).toLocaleString()}</span>}
+        {published && isClient && (
+          <span>{new Date(published).toLocaleString()}</span>
+        )}
       </div>
 
       <p className="text-lg text-gray-700 mb-4">{description}</p>

@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -31,6 +30,12 @@ export default function CategoryPage() {
   const totalPages = Math.ceil(news.length / perPage);
   const start = (page - 1) * perPage;
   const paginatedNews = news.slice(start, start + perPage);
+
+  const [isClient, setIsClient] = useState(false);
+  
+  useEffect(() => { 
+    setIsClient(true); 
+  }, []);
 
   useEffect(() => {
     const fetchCategoryNews = async () => {
@@ -84,8 +89,6 @@ export default function CategoryPage() {
         </div>
       </div>
 
-      {loading && <p>Loading news...</p>}
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {paginatedNews.map((item, i) => (
           <Link
@@ -121,9 +124,7 @@ export default function CategoryPage() {
 
                 <div className="text-xs mt-4 text-gray-500">
                   {item.source?.name} —{" "}
-                  {item.publishedAt
-                    ? new Date(item.publishedAt).toLocaleString()
-                    : ""}
+                  {isClient && item.publishedAt && new Date(item.publishedAt).toLocaleString()}
                 </div>
               </div>
             </article>
