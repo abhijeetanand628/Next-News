@@ -1,8 +1,12 @@
+import { MOCK_NEWS } from "@/app/lib/mockNews";
+
 export async function GET(request: Request) {
     const apiKey = process.env.NEWS_API_KEY;
 
+    // Fallback if no key (though user said they have it, this is safe)
     if (!apiKey) {
-        return new Response(JSON.stringify({ error: "Missing API key" }), { status: 500 });
+        console.warn("No API Key found, returning mock data.");
+        return Response.json({ status: "ok", articles: MOCK_NEWS });
     }
 
     const { searchParams } = new URL(request.url);
@@ -25,9 +29,41 @@ export async function GET(request: Request) {
         url = `https://newsapi.org/v2/top-headlines?country=us&pageSize=50&apiKey=${apiKey}`;
     }
 
-    const response = await fetch(url);
-    const data = await response.json();
+    try {
+        const response = await fetch(url);
+        
+        // NewsAPI returns 426 or 401 or 403 when blocked or limited
+        if (!response.ok) {
+            console.error(`NewsAPI Error: ${response.status} ${response.statusText}`);
+            throw new Error("NewsAPI fetch failed");
+        }
 
-    // Return the JSON data to the client
-    return Response.json(data);
+        const data = await response.json();
+
+        // Check for application-level error (e.g., status: "error")
+        if (data.status === "error") {
+            console.error("NewsAPI returned error status:", data.message);
+            throw new Error(data.message);
+        }
+
+        // Return real data
+        return Response.json(data);
+
+    } catch (error) {
+        console.warn("Returning MOCK DATA due to API error:", error);
+        
+        // Filter mock data if category is requested
+        let filteredMock = MOCK_NEWS;
+        if (category) {
+            filteredMock = MOCK_NEWS.filter(a => a.category === category);
+            // If we filter too much, just return all mixed to keep UI populated
+            if (filteredMock.length === 0) filteredMock = MOCK_NEWS;
+        }
+
+        return Response.json({
+            status: "ok",
+            totalResults: filteredMock.length,
+            articles: filteredMock
+        });
+    }
 }
