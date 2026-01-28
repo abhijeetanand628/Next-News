@@ -144,20 +144,25 @@ const Header = () => {
     setOpen(false);
   }
 
-  const reorderedCategories = selectedCategory ? [
-    categories.find((c) => c.value === selectedCategory)!,
-    { label: 'Home', value:"__home"},
-    ...categories.filter((c) => c.value !== selectedCategory),
-  ]
-  : categories;
+  const activeCategory = categories.find((c) => c.value === selectedCategory);
+
+  const reorderedCategories = activeCategory 
+    ? [
+        activeCategory,
+        { label: 'Home', value: "__home" },
+        ...categories.filter((c) => c.value !== selectedCategory),
+      ]
+    : categories;
 
   useEffect(() => {
     if (urlCategory) {
       setSelectedCategory(urlCategory);
+    } else if (pathname === "/saved") {
+      setSelectedCategory("saved");
     } else {
       setSelectedCategory(null);
     }
-  }, [urlCategory]);
+  }, [urlCategory, pathname]);
 
   useEffect(() => {
     localStorage.removeItem("searchPaid")
