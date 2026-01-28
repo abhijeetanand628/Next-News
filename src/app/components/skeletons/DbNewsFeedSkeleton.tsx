@@ -3,10 +3,6 @@ import Skeleton from "../Skeleton";
 export default function DbNewsFeedSkeleton() {
   return (
     <div className="mb-12">
-      {/* Title Skeleton */}
-      <div className="flex items-center gap-2 mb-6">
-        <Skeleton className="w-48 h-8 rounded-lg" />
-      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {Array.from({ length: 4 }).map((_, i) => (

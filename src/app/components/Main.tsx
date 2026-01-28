@@ -109,8 +109,10 @@ export default function Main() {
         </div>
       )}
 
+      <h2 className="text-3xl font-bold mt-14 mb-6">Community Stories</h2>
+
       {loading ? (
-        <div className="mt-14">
+        <div className="">
             <DbNewsFeedSkeleton />
         </div>
       ) : (
