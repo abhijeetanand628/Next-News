@@ -10,6 +10,7 @@ A modern, feature-rich news aggregation platform built with Next.js that provide
 - **Search Functionality**: Premium search feature to find articles by keywords
 - **Article Details**: Detailed article view with full content and metadata
 - **Payment Integration**: Razorpay integration for premium features (search and article access)
+- **Saved Articles**: Save articles to read later (requires authentication)
 - **Responsive Design**: Fully responsive UI built with Tailwind CSS
 - **Smooth Navigation**: Intuitive navigation with sidebar menu and smooth scrolling
 
@@ -22,6 +23,7 @@ A modern, feature-rich news aggregation platform built with Next.js that provide
 - **Payment Gateway**: Razorpay
 - **News API**: NewsAPI.org
 - **React**: 19.2.0
+- **Database**: MongoDB with Mongoose
 - **React Compiler**: Enabled for optimized performance
 
 ## 📋 Prerequisites
@@ -36,12 +38,14 @@ Before you begin, ensure you have the following installed:
 ## 🔧 Installation
 
 1. Clone the repository:
+
 ```bash
 git clone <repository-url>
 cd nextnews
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 # or
@@ -60,9 +64,13 @@ NEWS_API_KEY=your_newsapi_key_here
 RAZORPAY_KEY_ID=your_razorpay_key_id
 RAZORPAY_KEY_SECRET=your_razorpay_key_secret
 NEXT_PUBLIC_RAZORPAY_KEY_ID=your_razorpay_key_id
+
+# Database Configuration
+MONGODB_URI=your_mongodb_connection_string
 ```
 
 4. Run the development server:
+
 ```bash
 npm run dev
 # or
@@ -75,58 +83,92 @@ pnpm dev
 
 ## 📁 Project Structure
 
-```
 nextnews/
 ├── src/
-│   └── app/
-│       ├── api/
-│       │   ├── news/
-│       │   │   └── route.ts          # News API proxy endpoint
-│       │   └── razorpay/
-│       │       ├── order/
-│       │       │   └── route.ts      # Razorpay order creation
-│       │       └── verify/
-│       │           └── route.ts      # Payment verification
-│       ├── article/
-│       │   └── page.tsx              # Article detail page
-│       ├── category/
-│       │   └── [slug]/
-│       │       └── page.tsx          # Category-specific news page
-│       ├── search/
-│       │   └── page.tsx              # Search results page
-│       ├── components/
-│       │   ├── Header.tsx            # Navigation header with search
-│       │   ├── Footer.tsx            # Site footer
-│       │   ├── Main.tsx              # Home page main component
-│       │   ├── HotTopics.tsx        # Featured news carousel
-│       │   ├── LatestNews.tsx       # News grid component
-│       │   └── SideBar.tsx          # Category navigation sidebar
-│       ├── layout.tsx                # Root layout
-│       ├── page.tsx                  # Home page
-│       └── globals.css               # Global styles
-├── public/                           # Static assets
-├── next.config.ts                    # Next.js configuration
-├── tsconfig.json                     # TypeScript configuration
-└── package.json                      # Dependencies and scripts
-```
+│ └── app/
+│ ├── api/
+│ │ ├── articles/
+│ │ │ ├── [id]/
+│ │ │ │ └── route.ts # Fetch single article by ID
+│ │ │ └── route.ts # Fetch all database articles
+│ │ ├── news/
+│ │ │ └── route.ts # NewsAPI.org proxy endpoint
+│ │ ├── razorpay/
+│ │ │ ├── order/
+│ │ │ │ └── route.ts # Create payment order
+│ │ │ └── verify/
+│ │ │ └── route.ts # Verify payment signature
+│ │ ├── save/
+│ │ │ └── route.ts # Save article to user profile
+│ │ └── seed/
+│ │ └── route.ts # Seed database with initial data
+│ ├── article/
+│ │ ├── [id]/
+│ │ │ └── page.tsx # Dynamic article detail page
+│ │ └── page.tsx # Article main page
+│ ├── category/
+│ │ └── [slug]/
+│ │ └── page.tsx # Dynamic category news page
+│ ├── saved/
+│ │ ├── loading.tsx # Loading state for saved page
+│ │ └── page.tsx # User's saved articles page
+│ ├── search/
+│ │ ├── SearchContent.tsx # Search results client component
+│ │ └── page.tsx # Search page wrapper
+│ ├── components/
+│ │ ├── skeletons/ # Loading UI components
+│ │ │ ├── ArticleSkeleton.tsx
+│ │ │ ├── CategorySkeleton.tsx
+│ │ │ ├── DbNewsFeedSkeleton.tsx
+│ │ │ ├── HotTopicsSkeleton.tsx
+│ │ │ ├── LatestNewsSkeleton.tsx
+│ │ │ ├── MainSkeleton.tsx
+│ │ │ └── SearchSkeleton.tsx
+│ │ ├── DbNewsFeed.tsx # Feed from local database
+│ │ ├── Footer.tsx # Application footer
+│ │ ├── Header.tsx # Main navigation header
+│ │ ├── HotTopics.tsx # Trending news carousel
+│ │ ├── LatestNews.tsx # Latest news grid
+│ │ ├── Main.tsx # Homepage main container
+│ │ ├── SideBar.tsx # Navigation sidebar
+│ │ └── Skeleton.tsx # Base skeleton component
+│ ├── lib/
+│ │ ├── db.ts # Database connection utility
+│ │ └── mockNews.ts # Mock data for testing
+│ ├── models/
+│ │ ├── Article.ts # Mongoose content schema
+│ │ └── User.ts # Mongoose user schema
+│ ├── layout.tsx # Root layout definition
+│ ├── page.tsx # Homepage
+│ └── globals.css # Global CSS styles
+├── public/ # Static public assets
+├── next.config.ts # Next.js configuration
+├── tsconfig.json # TypeScript configuration
+└── package.json # Project dependencies
 
 ## 🔌 API Routes
 
 ### `/api/news`
+
 Fetches news articles from NewsAPI.org with support for:
+
 - **Query Parameters**:
   - `category`: Filter by news category (optional)
   - `search`: Search for articles by keyword (optional)
 - **Response**: JSON array of news articles
 
 ### `/api/razorpay/order`
+
 Creates a Razorpay order for payment processing.
+
 - **Method**: POST
 - **Body**: `{ amount: number }`
 - **Response**: Razorpay order object
 
 ### `/api/razorpay/verify`
+
 Verifies Razorpay payment signature.
+
 - **Method**: POST
 - **Body**: Payment response from Razorpay
 - **Response**: `{ success: boolean }`
@@ -143,21 +185,25 @@ Payments are processed through Razorpay and verified server-side for security.
 ## 🎨 Features in Detail
 
 ### Home Page
+
 - Displays hot topics in an auto-rotating carousel (changes every 3 seconds)
 - Shows latest news in a paginated grid layout
 - Responsive design that works on all screen sizes
 
 ### Category Pages
+
 - Filter news by specific categories
 - Paginated results (6 articles per page)
 - Smooth navigation and scrolling
 
 ### Search Page
+
 - Premium feature requiring payment
 - Search across all news articles
 - Results displayed in a grid layout
 
 ### Article Page
+
 - Detailed view of individual articles
 - Shows article image, title, description, and content
 - Option to read original source (premium feature)
@@ -191,12 +237,13 @@ For more deployment options, check out the [Next.js deployment documentation](ht
 
 Make sure to set up the following environment variables:
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `NEWS_API_KEY` | Your NewsAPI.org API key | Yes |
-| `RAZORPAY_KEY_ID` | Razorpay Key ID | Yes (for payments) |
-| `RAZORPAY_KEY_SECRET` | Razorpay Key Secret | Yes (for payments) |
-| `NEXT_PUBLIC_RAZORPAY_KEY_ID` | Public Razorpay Key ID | Yes (for payments) |
+| Variable                      | Description               | Required                 |
+| ----------------------------- | ------------------------- | ------------------------ |
+| `NEWS_API_KEY`                | Your NewsAPI.org API key  | Yes                      |
+| `RAZORPAY_KEY_ID`             | Razorpay Key ID           | Yes (for payments)       |
+| `RAZORPAY_KEY_SECRET`         | Razorpay Key Secret       | Yes (for payments)       |
+| `NEXT_PUBLIC_RAZORPAY_KEY_ID` | Public Razorpay Key ID    | Yes (for payments)       |
+| `MONGODB_URI`                 | MongoDB Connection String | Yes (for saved articles) |
 
 ## 📝 Scripts
 
