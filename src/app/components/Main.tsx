@@ -16,9 +16,13 @@ type Article = {
   publishedAt: string;
 };
 
-export default function Main() {
+interface MainProps {
+  initialDbArticles?: any[];
+}
+
+export default function Main({ initialDbArticles = [] }: MainProps) {
   const [news, setNews] = useState<Article[]>([]);
-  const [dbArticles, setDbArticles] = useState<any[]>([]); // ToDo: Type this properly
+  const [dbArticles, setDbArticles] = useState<any[]>(initialDbArticles); // Initialize with SSR data
   const [loading, setLoading] = useState<boolean>(true);
   const [currentHotIndex, setCurrentHotIndex] = useState(0);
   const [visible, setVisible] = useState<boolean>(true);
