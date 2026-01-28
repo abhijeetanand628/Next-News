@@ -1,6 +1,6 @@
-"use client";
-import { X } from "lucide-react";
+import { X, Bookmark } from "lucide-react";
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 interface Category {
   label: string;
@@ -17,6 +17,7 @@ interface SideBarProps {
 }
 
 const SideBar = ({ open, onClose, categories, selectedCategory, onSelectCategory, goHome }: SideBarProps) => {
+    const router = useRouter();
 
     useEffect(() => {
     if (open) {
@@ -78,6 +79,21 @@ const SideBar = ({ open, onClose, categories, selectedCategory, onSelectCategory
                 {cat.label}
               </li>
             ))}
+            
+            <div className="h-px bg-gray-200 my-2" />
+
+            <li 
+                onClick={() => {
+                  router.push("/saved");
+                  onClose();
+                }}
+                className={`cursor-pointer px-3 py-2 rounded hover:bg-gray-100 flex items-center gap-2 ${
+                  selectedCategory === "saved" ? "text-blue-600 font-bold" : "text-gray-700"
+                }`}
+            >
+              <Bookmark size={18} />
+              Saved Articles
+            </li>
           </ul>
         </nav>
       </div>

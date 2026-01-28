@@ -4,6 +4,8 @@ import HotTopics from "./HotTopics";
 import LatestNews from "./LatestNews";
 import HotTopicsSkeleton from "./skeletons/HotTopicsSkeleton";
 import LatestNewsSkeleton from "./skeletons/LatestNewsSkeleton";
+import DbNewsFeedSkeleton from "./skeletons/DbNewsFeedSkeleton";
+import DbNewsFeed from "./DbNewsFeed";
 
 type Article = {
   title: string;
@@ -16,6 +18,7 @@ type Article = {
 
 export default function Main() {
   const [news, setNews] = useState<Article[]>([]);
+  const [dbArticles, setDbArticles] = useState<any[]>([]); // ToDo: Type this properly
   const [loading, setLoading] = useState<boolean>(true);
   const [currentHotIndex, setCurrentHotIndex] = useState(0);
   const [visible, setVisible] = useState<boolean>(true);
@@ -36,6 +39,13 @@ export default function Main() {
         const response = await fetch("/api/news");
         const data = await response.json();
         setNews(data.articles || []);
+
+        const dbRes = await fetch("/api/articles");
+        const dbData = await dbRes.json();
+        if (dbData.success) {
+            setDbArticles(dbData.data);
+        }
+
       } catch (error) {
         console.error("Error fetching news:", error);
       } finally {
@@ -97,6 +107,18 @@ export default function Main() {
             onMouseLeave={() => setIsPaused(false)}
           />
         </div>
+      )}
+
+      {loading ? (
+        <div className="mt-14">
+            <DbNewsFeedSkeleton />
+        </div>
+      ) : (
+          dbArticles.length > 0 && (
+            <div className="mt-14">
+                <DbNewsFeed articles={dbArticles} />
+            </div>
+          )
       )}
 
       <h2 className="text-3xl font-bold mt-14 mb-6">Latest News</h2>
