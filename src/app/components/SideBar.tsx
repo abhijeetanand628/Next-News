@@ -88,7 +88,7 @@ const SideBar = ({ open, onClose, categories, selectedCategory, onSelectCategory
                   onClose();
                 }}
                 className={`cursor-pointer px-3 py-2 rounded hover:bg-gray-100 flex items-center gap-2 ${
-                  selectedCategory === "saved" ? "text-blue-600 font-bold" : "text-gray-700"
+                  selectedCategory === "saved" ? "font-bold text-black underline" : "text-gray-700"
                 }`}
             >
               <Bookmark size={18} />
