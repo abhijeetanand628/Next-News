@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import connectDB from "../../lib/db";
 import Article from "../../models/Article";
 
+// POST
 export async function POST(req: Request) {
   try {
     // 1️⃣ Connect to database
@@ -19,6 +20,29 @@ export async function POST(req: Request) {
 
     // 4️⃣ Send success response
     return NextResponse.json({ success: true, data: article });
+  } catch (error: any) {
+    console.error("ERROR:", error);
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    );
+  }
+}
+
+// GET  - fetch all articles
+export async function GET() {
+  try {
+    console.log("GET /api/articles hit");
+
+    await connectDB();
+
+    const articles = await Article.find().sort({ createdAt: -1 });
+
+    return NextResponse.json({
+      success: true,
+      count: articles.length,
+      data: articles,
+    });
   } catch (error: any) {
     console.error("ERROR:", error);
     return NextResponse.json(
